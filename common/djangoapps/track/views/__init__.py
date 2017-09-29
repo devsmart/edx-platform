@@ -3,6 +3,7 @@ import json
 
 import pytz
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -33,9 +34,19 @@ def _get_request_header(request, header_name, default=''):
 
 
 def _get_request_ip(request, default=''):
-    """Helper method to get IP from a request's META dict, if present."""
+    """
+    Helper method to get IP from a request's META dict, if present.
+    If ENABLE_EVENT_TRACKING_IP_FIRST_TWO_OCTETS is True:
+    Anonymize the ip address to the first two octets.
+    This gives enough data to be useful for Analysis
+    without explicitly identifying user
+        eg. 127.0.0.1 => 127.0
+    """
     if request is not None and hasattr(request, 'META'):
-        return get_ip(request)
+        ip_address = get_ip(request)
+        if settings.FEATURES.get('ENABLE_EVENT_TRACKING_IP_FIRST_TWO_OCTETS', False):
+            ip_address = '.'.join(ip_address.split('.')[0:2])
+        return ip_address
     else:
         return default
 
