@@ -35,7 +35,7 @@ mock==1.0.1
 networkx==1.7
 nltk==2.0.5
 oauthlib==0.6.3
-paramiko==1.9.0
+paramiko==3.4.0
 path.py==7.2
 Pillow==2.6.1
 pip>=1.3
